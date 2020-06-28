@@ -44,7 +44,6 @@ WORKDIR /app
 
 COPY --from=builder /app/app /app/app
 COPY ./conf/config.local.yaml /app/conf/config.local.yaml
-COPY ./conf/config.prod.yaml /app/conf/config.prod.yaml
 COPY ./templates /app/templates
 # RUN ls /app && cat /app/config/config.toml
 # Command to run the executable

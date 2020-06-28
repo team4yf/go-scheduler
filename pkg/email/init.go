@@ -34,11 +34,11 @@ func Init() {
 	client := NewSMTPClient(SMTPConfig{
 		Name:      viper.GetString("email.name"),
 		Address:   viper.GetString("email.address"),
-		ReplyTo:   viper.GetString("email.reply_to"),
+		ReplyTo:   viper.GetString("email.reply"),
 		Host:      viper.GetString("email.host"),
 		Port:      viper.GetInt("email.port"),
 		Username:  viper.GetString("email.username"),
-		Password:  viper.GetString("email.pass"), // 这里读取的是系统的环境变量 #GS_EMAIL_PASS
+		Password:  viper.GetString("email.password"), // 这里读取的是系统的环境变量 #GS_EMAIL_PASSWORD
 		Keepalive: viper.GetInt("email.keepalive"),
 	})
 	// log.Info("client: %+v\n", client)
