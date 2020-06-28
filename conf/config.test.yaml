@@ -1,0 +1,46 @@
+run_mode: debug
+addr: ':8080'
+name: go-scheduler
+logger: 
+    file: api-access.log
+    level: info
+
+db:
+    engine: postgres
+    user: devuser
+    password: DevPass123
+    host: localhost
+    port: 5432
+    database: devdb
+    charset: utf8
+    showSql: true
+email:
+    host: smtp.qq.com
+    port: 587
+    username: 2917071792@qq.com
+    password: xxxx
+    name: no_reply           # 发送者名称
+    address: 2917071792@qq.com
+    reply_to: 2917071792@qq.com
+    keepalive: 30         # 连接保持时长
+log:
+    writers: file,stdout            # 有2个可选项：file,stdout, 可以两者同时选择输出位置，有2个可选项：file,stdout。选择file会将日志记录到logger_file指定的日志文件中，选择stdout会将日志输出到标准输出，当然也可以两者同时选择
+    logger_level: DEBUG             # 日志级别，DEBUG, INFO, WARN, ERROR, FATAL
+    logger_file: ./logs/app.log   # 日志文件
+    logger_warn_file: ./logs/app.wf.log
+    logger_error_file: ./logs/app.err.log
+    log_format_text: true           # 日志的输出格式，json或者plaintext，true会输出成plaintext格式，false会输出成json格式
+    rollingPolicy: daily            # rotate依据，可选的有：daily, size。如果选daily则根据天进行转存，如果是size则根据大小进行转存
+    log_rotate_date: 1              # rotate转存时间，配合rollingPolicy: daily使用
+    log_rotate_size: 1              # rotate转存大小，配合rollingPolicy: size使用
+    log_backup_count: 7             # 当日志文件达到转存标准时，log系统会将该日志文件进行压缩备份，这里指定了备份文件的最大个数。
+    
+email:
+    host: smtp.qq.com
+    port: 587            # 端口
+    username: 2917071792@qq.com
+    password: x # 这里不要写密码，密码在环境变量中保存 GS_EMAIL_PASS
+    name: no_reply
+    address: 2917071792@qq.com
+    reply_to: 2917071792@qq.com
+    keepalive: 30         # 连接保持时长

@@ -1,0 +1,5 @@
+conf/postgresql/
+mongodata/
+rest-client/
+*.md
+*.log

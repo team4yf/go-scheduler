@@ -1,0 +1,99 @@
+
+#  dev: http://localhost:8080
+@api = http://localhost:8080
+
+@code = test
+### create
+POST {{api}}/api/v1/job/create
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "cron": "* * * * *",
+    "code": "{{code}}",
+    "retryMax": 5,
+    "name": "{{code}}",
+    "title":"{{code}}",
+    "remark": "{{code}}",
+    "url": "http://localhost:8080/health",
+    "timeout": 600,
+    "delay": 10,
+    "executeType": "GET",
+    "notifyTopic": "demo"
+ }
+
+
+### update
+
+POST {{api}}/api/v1/job/update
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "status": 2,
+    "code": "{{code}}"
+}
+
+
+
+### list
+
+GET {{api}}/api/v1/job/list
+Authorization: Basic admin 123456
+
+### get
+
+GET {{api}}/api/v1/job/get/{{code}}
+Authorization: Basic admin 123456
+
+### execute once
+
+GET {{api}}/api/v1/job/execute/{{code}}
+Authorization: Basic admin 123456
+
+
+
+### get logs of the code
+GET {{api}}/api/v1/task/list/{{code}}
+Authorization: Basic admin 123456
+
+### get logs of the code
+GET {{api}}/api/v1/task/export/{{code}}
+Authorization: Basic admin 123456
+
+
+### subscribe
+
+POST {{api}}/api/v1/subscribe/sub/{{code}}
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "data": [
+        {
+            "code":"{{code}}",
+            "notifyType":"email",
+            "notifyEvent":"success",
+            "subscriber":"fwang@evolveconsulting.com.hk"
+        }
+    ]
+}
+
+
+### list subscribe
+
+GET {{api}}/api/v1/subscribe/list/{{code}}
+Authorization: Basic admin 123456
+
+### unSubscribe
+
+POST {{api}}/api/v1/subscribe/unSub/{{code}}
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "notifyType":"webhook",
+    "notifyEvent":"success",
+    "subscriber":"http://www.baidu.com"
+        
+}
