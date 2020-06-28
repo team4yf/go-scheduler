@@ -31,7 +31,7 @@ func init() {
 		Port:     viper.GetInt("db.port"),
 		Database: viper.GetString("db.database"),
 		Charset:  viper.GetString("db.charset"),
-		ShowSQL:  viper.GetBool("db.showSql"),
+		ShowSQL:  viper.GetBool("db.showsql"),
 	}); err != nil {
 		panic(err)
 	} else {

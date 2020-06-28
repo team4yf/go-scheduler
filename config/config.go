@@ -81,7 +81,7 @@ func (cfg *Config) initConfig() error {
 		Port:     viper.GetInt("db.port"),
 		Database: viper.GetString("db.database"),
 		Charset:  viper.GetString("db.charset"),
-		ShowSQL:  viper.GetBool("db.showSql"),
+		ShowSQL:  viper.GetBool("db.showsql"),
 	}
 
 	return nil
@@ -90,7 +90,7 @@ func (cfg *Config) initConfig() error {
 func (cfg *Config) initLog() {
 	config := log.Config{
 		Writers:         viper.GetString("log.writers"),
-		LoggerLevel:     viper.GetString("log.logger_level"),
+		LoggerLevel:     viper.GetString("log.level"),
 		LoggerFile:      viper.GetString("log.logger_file"),
 		LoggerWarnFile:  viper.GetString("log.logger_warn_file"),
 		LoggerErrorFile: viper.GetString("log.logger_error_file"),

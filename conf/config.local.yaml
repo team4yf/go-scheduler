@@ -1,4 +1,4 @@
-run_mode: debug
+mode: debug
 addr: ':8080'
 name: go-scheduler
 export: export
@@ -14,11 +14,11 @@ db:
     port: 5432
     database: devdb
     charset: utf8
-    showSql: true
+    showsql: true
 
 log:
     writers: file,stdout            # 有2个可选项：file,stdout, 可以两者同时选择输出位置，有2个可选项：file,stdout。选择file会将日志记录到logger_file指定的日志文件中，选择stdout会将日志输出到标准输出，当然也可以两者同时选择
-    logger_level: DEBUG             # 日志级别，DEBUG, INFO, WARN, ERROR, FATAL
+    level: DEBUG             # 日志级别，DEBUG, INFO, WARN, ERROR, FATAL
     logger_file: ./logs/app.log   # 日志文件
     logger_warn_file: ./logs/app.wf.log
     logger_error_file: ./logs/app.err.log

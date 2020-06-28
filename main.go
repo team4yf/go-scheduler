@@ -29,7 +29,7 @@ var migration model.Migration
 func main() {
 	config.Init("")
 	// Set gin mode.
-	gin.SetMode(viper.GetString("run_mode"))
+	gin.SetMode(viper.GetString("mode"))
 
 	// Init the model
 	model.CreateDb()

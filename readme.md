@@ -80,7 +80,7 @@ it's build with `gin`, base the postgresql/mysql, send http request accroding to
 - defined the config.*.yaml
 
     ```yaml
-    run_mode: debug
+    mode: debug
     addr: ':8080'
     name: go-scheduler
     logger: 
@@ -95,7 +95,7 @@ it's build with `gin`, base the postgresql/mysql, send http request accroding to
         port: 5432
         database: devdb
         charset: utf8
-        showSql: true
+        showsql: true
     ```
 
 - define the enviroment `GS_DEPLOY_MODE=PROD`
@@ -103,4 +103,24 @@ it's build with `gin`, base the postgresql/mysql, send http request accroding to
   it will load the config file `conf/config.prod.yaml`, 
   
   `config.local.yaml` for default.
+
+- define the email config
+
+  - GS_MODE
+  - GS_EMAIL_HOST 
+  - GS_EMAIL_PORT
+  - GS_EMAIL_USERNAME
+  - GS_EMAIL_PASSWORD
+  - GS_EMAIL_NAME
+  - GS_EMAIL_ADDRESS
+  - GS_EMAIL_REPLY
+
+  - GS_LOG_LEVEL
+  
+  - GS_DB_USER
+  - GS_DB_PASSWORD
+  - GS_DB_HOST
+  - GS_DB_PORT
+  - GS_DB_DATABASE
+  - GS_DB_SHOWSQL
 

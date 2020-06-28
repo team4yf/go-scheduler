@@ -37,7 +37,7 @@ type Logger interface {
 // Config is the struct for logger information
 type Config struct {
 	Writers         string `yaml:"writers"`
-	LoggerLevel     string `yaml:"logger_level"`
+	LoggerLevel     string `yaml:"level"`
 	LoggerFile      string `yaml:"logger_file"`
 	LoggerWarnFile  string `yaml:"logger_warn_file"`
 	LoggerErrorFile string `yaml:"logger_error_file"`
