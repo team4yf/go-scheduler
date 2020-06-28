@@ -3,7 +3,7 @@ PROJECTNAME=$(shell basename "$(PWD)")
 GOBASE=$(shell pwd)
 GOBIN=$(GOBASE)/bin
 
-all: build docker-build docker-push docker-push-public
+all: build docker-build docker-push #docker-push-public
 
 install:
 	go mod download
@@ -22,7 +22,6 @@ docker-build:
 	docker build -t yfsoftcom/$(PROJECTNAME):latest -t registry.cn-hangzhou.aliyuncs.com/metro/$(PROJECTNAME):beta -t $(PROJECTNAME):latest .
 
 docker-push:
-	docker login --username=retail@evolveconsulting.com.hk --password=Mengzi@169 registry.cn-hangzhou.aliyuncs.com
 	docker push registry.cn-hangzhou.aliyuncs.com/metro/$(PROJECTNAME):beta
 
 docker-push-public:
