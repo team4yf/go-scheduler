@@ -38,6 +38,18 @@ func Init() {
 	subRepo = subscribe.NewSubscribeRepo()
 }
 
+func generateCallback(theJob *model.Job) func() {
+	return func() {
+		go runJob(theJob, func(data interface{}, err error) {
+			if err != nil {
+				log.Errorf("Run Job: %+v, Error: %+v\n", theJob, err)
+				return
+			}
+		})
+	}
+
+}
+
 //Callback the callback struct
 type Callback func(data interface{}, err error)
 
@@ -83,18 +95,12 @@ func (s *simpleJobService) Init() (err error) {
 	defer s.locker.RUnlock()
 	for _, j := range list {
 		//define a callback
-		callback := func() {
-			go runJob(j, func(data interface{}, err error) {
-				if err != nil {
-					log.Errorf("Run Job: %+v, Error: %+v\n", j, err)
-					return
-				}
-			})
-		}
+		//Important: 这里出现了闭包的问题
+
 		//wrap the data and the callback
 		s.handler[j.Code] = &JobWrapper{
 			job: j,
-			f:   callback,
+			f:   generateCallback(j),
 		}
 	}
 	s.schedule = cron.New()
