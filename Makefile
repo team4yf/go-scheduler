@@ -5,6 +5,8 @@ GOBIN=$(GOBASE)/bin
 
 all: build docker-build docker-push #docker-push-public
 
+all-publich: build docker-build docker-push-public
+
 install:
 	go mod download
 
