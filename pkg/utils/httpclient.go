@@ -52,6 +52,7 @@ func request(req *http.Request, timeout int) ResponseWrapper {
 		client.Timeout = time.Duration(timeout) * time.Second
 	}
 	setRequestHeader(req)
+	req.SetBasicAuth("admin", "123456")
 	resp, err := client.Do(req)
 	if err != nil {
 		wrapper.Body = fmt.Sprintf("执行HTTP请求错误-%s", err.Error())
