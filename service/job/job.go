@@ -2,7 +2,6 @@ package job
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -123,7 +122,7 @@ func (s *simpleJobService) Start() (err error) {
 			return err
 		}
 		wrapper.id = id
-		fmt.Printf("Start() Job: Code-> %v; Corn-> %v;\n", wrapper.job.Code, wrapper.job.Cron)
+		log.Infof("Start() Job: Code-> %v; Corn-> %v;\n", wrapper.job.Code, wrapper.job.Cron)
 	}
 	//startup
 	s.schedule.Start()
@@ -252,12 +251,9 @@ func runJob(job *model.Job, callback Callback) {
 				}
 				switch sub.NotifyType {
 				case "webhook":
-
-					// fmt.Printf("webhook: %s, body: %+v\n", sub.Subscriber, body)
 					utils.PostJson(sub.Subscriber, utils.JSON2String(body), 120)
 				case "email":
 					subject, content := email.NewNotifyEmail("./templates/task-email.html", "Scheduler-Notify", *task)
-					log.Infof("content:%s", content)
 					email.Send(sub.Subscriber, subject, content)
 				}
 				subscribers = append(subscribers, sub.Subscriber)

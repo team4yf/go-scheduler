@@ -29,7 +29,10 @@ Content-Type: application/json
 
 {
     "status": 1,
-    "code": "{{code}}"
+    "code": "{{code}}",
+    "auth":"basic",
+    "authProperties":"{\"username\":\"admin\",\"password\":\"123456\"}",
+    "argument":"{}"
 }
 
 
