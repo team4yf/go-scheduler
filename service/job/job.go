@@ -123,7 +123,7 @@ func (s *simpleJobService) Start() (err error) {
 			return err
 		}
 		wrapper.id = id
-		fmt.Printf("Start() wrapper: %+v", wrapper)
+		fmt.Printf("Start() Job: Code-> %v; Corn-> %v;\n", wrapper.job.Code, wrapper.job.Cron)
 	}
 	//startup
 	s.schedule.Start()
@@ -189,11 +189,24 @@ func runJob(job *model.Job, callback Callback) {
 		return
 	}
 	var rsp utils.ResponseWrapper
-	if job.ExecuteType == "POST" {
-		argument := "{}"
-		rsp = utils.PostJson(job.URL, argument, job.Timeout)
-	} else if job.ExecuteType == "GET" {
-		rsp = utils.Get(job.URL, job.Timeout)
+	//construct the auth data
+	authProp := job.AuthProperties
+	auth := &utils.HttpAuth{
+		Type: utils.HTTPAuthType(job.Auth),
+	}
+	if authProp != "" {
+		utils.StringToStruct(authProp, &auth.Data)
+	} else {
+		auth.Data = utils.HTTPAuthData(make(map[string]interface{}))
+	}
+	//perform the request
+	switch job.ExecuteType {
+	case "POST":
+		rsp = utils.PostJsonWithAuth(job.URL, job.Argument, job.Timeout, auth)
+	case "GET":
+		rsp = utils.GetWithAuth(job.URL, job.Timeout, auth)
+	case "FORM":
+		rsp = utils.PostFormWithAuth(job.URL, job.Argument, job.Timeout, auth)
 	}
 
 	task.EndAt = time.Now()

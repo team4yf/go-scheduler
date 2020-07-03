@@ -131,7 +131,12 @@ func Str2Int(str string, dft int) int {
 	return dft
 
 }
-
+func StringToStruct(data string, desc interface{}) (err error) {
+	if err = json.Unmarshal(([]byte)(data), desc); err != nil {
+		return
+	}
+	return
+}
 func JSON2String(j interface{}) (str string) {
 	bytes, err := json.Marshal(j)
 	if err != nil {

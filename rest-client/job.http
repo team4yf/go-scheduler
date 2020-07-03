@@ -2,7 +2,7 @@
 #  dev: http://localhost:8080
 @api = http://localhost:8080
 
-@code = test
+@code = add
 ### create
 POST {{api}}/api/v1/job/create
 Authorization: Basic admin 123456
@@ -19,6 +19,9 @@ Content-Type: application/json
     "timeout": 600,
     "delay": 10,
     "executeType": "GET",
+    "auth":"basic",
+    "authProperties":"{}",
+    "argument":"{}",
     "notifyTopic": "demo"
  }
 
@@ -30,8 +33,11 @@ Authorization: Basic admin 123456
 Content-Type: application/json
 
 {
-    "status": 2,
-    "code": "{{code}}"
+    "status": 1,
+    "code": "{{code}}",
+    "auth":"basic",
+    "authProperties":"{\"username\":\"admin\",\"password\":\"123456\"}",
+    "argument":"{}"
 }
 
 

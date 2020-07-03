@@ -1,6 +1,7 @@
 package job
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -18,12 +19,6 @@ var (
 	jobRepo    job.JobRepo
 	jobService jobSvc.JobService
 )
-
-type UpdateReq struct {
-	Code   string `json:"code"`
-	Cron   string `json:"cron"`
-	Status int    `json:"status"`
-}
 
 func Init() {
 	jobRepo = job.NewJobRepo()
@@ -88,37 +83,40 @@ func Execute(c *gin.Context) {
 	utils.SendResponse(c, ex, result)
 }
 func Update(c *gin.Context) {
-	var req UpdateReq
+	var req model.CommonMap
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.SendResponse(c, errno.RequestBodyParseError, nil)
+		utils.SendResponse(c, err, nil)
 		return
 	}
-	if req.Code == "" {
-		utils.SendResponse(c, errno.RequestBodyParseError, nil)
+	exists := false
+	var status interface{}
+	var code interface{}
+	code, exists = req["code"]
+	if !exists {
+		utils.SendResponse(c, errors.New("Code required"), nil)
 		return
 	}
-	commonMap := make(model.CommonMap)
-	if req.Cron != "" {
-		commonMap["cron"] = req.Cron
-	}
-	if req.Status != 0 {
-		commonMap["status"] = req.Status
+	status, exists = req["status"]
+	if !exists {
+		utils.SendResponse(c, errors.New("Status required"), nil)
+		return
 	}
 
-	if err := jobRepo.Update(req.Code, commonMap); err != nil {
+	if err := jobRepo.Update(code.(string), req); err != nil {
 		utils.SendResponse(c, err, nil)
 		return
 	}
 
 	job := &model.Job{
-		Code: req.Code,
+		Code: code.(string),
 	}
-	if req.Status == 1 {
-		// run
+	switch status.(float64) {
+	case 1:
+		//run
 		jobService.Restart(job, func(data interface{}, err error) {
 			log.Errorf("data: %+v, err: %+v", data, err)
 		})
-	} else if req.Status == 2 {
+	case 2:
 		if err := jobService.Pause(job); err != nil {
 			utils.SendResponse(c, err, nil)
 			return
