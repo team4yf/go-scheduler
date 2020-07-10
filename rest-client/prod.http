@@ -30,8 +30,6 @@ Content-Type: application/json
 {
     "status": 1,
     "code": "{{code}}",
-    "auth":"basic",
-    "authProperties":"{\"username\":\"admin\",\"password\":\"123456\"}",
     "argument":"{}"
 }
 
@@ -54,7 +52,7 @@ Authorization: Basic admin 123456
 
 
 ### get logs of the code
-GET {{api}}/api/v1/task/list/{{code}}
+GET {{api}}/api/v1/task/list/{{code}}?l=100
 Authorization: Basic admin 123456
 
 ### get logs of the code

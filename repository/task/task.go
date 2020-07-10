@@ -33,7 +33,7 @@ func (r *taskRepo) Create(task *model.Task) (err error) {
 
 //List by code
 func (r *taskRepo) List(code string, p, l int) (tasks []*model.Task, err error) {
-	err = r.db.Where("code = ?", code).Limit(l).Offset((p - 1) * l).Find(&tasks).Error
+	err = r.db.Where("code = ?", code).Order("id desc").Limit(l).Offset((p - 1) * l).Find(&tasks).Error
 	return
 }
 
