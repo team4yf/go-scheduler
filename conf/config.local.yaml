@@ -8,11 +8,11 @@ logger:
 
 db:
     engine: postgres
-    user: devuser
-    password: DevPass123
+    user: localdev
+    password: Start123
     host: localhost
     port: 5432
-    database: devdb
+    database: localtest
     charset: utf8
     showsql: true
 
