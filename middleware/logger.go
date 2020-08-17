@@ -5,14 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 
 	host "github.com/team4yf/go-scheduler/pkg"
+	"github.com/team4yf/go-scheduler/pkg/log"
 )
 
 var (
@@ -90,10 +89,6 @@ func SetUp() gin.HandlerFunc {
 
 		accessLogJSON, _ := json.Marshal(accessLogMap)
 
-		if f, err := os.OpenFile(viper.GetString("logger.file"), os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666); err != nil {
-			log.Println(err)
-		} else {
-			f.WriteString(string(accessLogJSON) + "\n")
-		}
+		log.Infof((string)(accessLogJSON))
 	}
 }
