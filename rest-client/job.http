@@ -2,27 +2,30 @@
 #  dev: http://localhost:8080
 @api = http://localhost:8080
 
-@code = add
+@code = test
 ### create
-POST {{api}}/api/v1/job/create
+POST {{api}}/biz/common/create
 Authorization: Basic admin 123456
 Content-Type: application/json
 
 {
-    "cron": "* * * * *",
-    "code": "{{code}}",
-    "retryMax": 5,
-    "name": "{{code}}",
-    "title":"{{code}}",
-    "remark": "{{code}}",
-    "url": "http://localhost:8080/health",
-    "timeout": 600,
-    "delay": 10,
-    "executeType": "GET",
-    "auth":"basic",
-    "authProperties":"{}",
-    "argument":"{}",
-    "notifyTopic": "demo"
+    "table": "schedule_job",
+    "row": {
+        "cron": "* * * * *",
+        "code": "{{code}}",
+        "retry_max": 5,
+        "name": "{{code}}",
+        "title":"{{code}}",
+        "remark": "{{code}}",
+        "url": "http://localhost:8080/health",
+        "timeout": 600,
+        "delay": 10,
+        "execute_type": "GET",
+        "auth":"basic",
+        "auth_properties":"{}",
+        "argument":"{}",
+        "notify_topic": "demo"
+    }
  }
 
 
@@ -44,13 +47,19 @@ Content-Type: application/json
 
 ### list
 
-GET {{api}}/api/v1/job/list
+GET {{api}}/biz/common/find?table=schedule_job
 Authorization: Basic admin 123456
 
 ### get
 
-GET {{api}}/api/v1/job/get/{{code}}
+POST {{api}}/biz/common/first
 Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "table": "schedule_job",
+    "condition": "code = '{{code}}'"
+}
 
 ### execute once
 

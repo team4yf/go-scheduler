@@ -10,11 +10,10 @@ import (
 	"github.com/team4yf/go-scheduler/constant"
 	"github.com/team4yf/go-scheduler/model"
 	"github.com/team4yf/go-scheduler/pkg/email"
-	"github.com/team4yf/go-scheduler/pkg/log"
-	"github.com/team4yf/go-scheduler/pkg/utils"
 	"github.com/team4yf/go-scheduler/repository/job"
 	"github.com/team4yf/go-scheduler/repository/subscribe"
 	"github.com/team4yf/go-scheduler/repository/task"
+	"google.golang.org/appengine/log"
 )
 
 var (

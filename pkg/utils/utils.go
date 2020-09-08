@@ -5,19 +5,13 @@ import (
 	"crypto/md5"
 	"encoding/csv"
 	"encoding/gob"
-	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/team4yf/go-scheduler/errno"
-	"github.com/teris-io/shortid"
 
 	tnet "github.com/toolkits/net"
 )
@@ -71,21 +65,6 @@ type RespJSON struct {
 	Data    interface{} `json:"data"`
 }
 
-// SendResponse 返回json
-func SendResponse(c *gin.Context, err error, data interface{}) {
-	if err == nil {
-		err = errno.OK
-	}
-	code, message := errno.DecodeErr(err)
-
-	// always return http.StatusOK
-	c.JSON(http.StatusOK, RespJSON{
-		Code:    code,
-		Message: message,
-		Data:    data,
-	})
-}
-
 func ExportCsv(filePath string, header []string, data [][]string) (finalFilePath string, err error) {
 
 	if finalFilePath, err = filepath.Abs(filePath); err != nil {
@@ -120,32 +99,6 @@ func SendFile(ctx *gin.Context, fileName, targetPath string) {
 	ctx.Header("Content-Type", "application/octet-stream")
 	ctx.File(targetPath)
 }
-
-func Str2Int(str string, dft int) int {
-	if str == "" {
-		return dft
-	}
-	if i, err := strconv.ParseInt(str, 10, 64); err == nil {
-		return (int)(i)
-	}
-	return dft
-
-}
-func StringToStruct(data string, desc interface{}) (err error) {
-	if err = json.Unmarshal(([]byte)(data), desc); err != nil {
-		return
-	}
-	return
-}
-func JSON2String(j interface{}) (str string) {
-	bytes, err := json.Marshal(j)
-	if err != nil {
-		return "{}"
-	}
-	str = (string)(bytes)
-	return
-}
-
 func SliceIndexOf(s []string, target string) int {
 	for i, v := range s {
 		if v == target {
@@ -153,27 +106,4 @@ func SliceIndexOf(s []string, target string) int {
 		}
 	}
 	return -1
-}
-
-// GenShortID 生成一个id
-func GenShortID() (string, error) {
-	return shortid.Generate()
-}
-
-// GenUUID 生成随机字符串，eg: 76d27e8c-a80e-48c8-ad20-e5562e0f67e4
-func GenUUID() string {
-	u, _ := uuid.NewRandom()
-	return u.String()
-}
-
-// GetReqID 获取请求中的request_id
-func GetReqID(c *gin.Context) string {
-	v, ok := c.Get("X-Request-ID")
-	if !ok {
-		return ""
-	}
-	if requestID, ok := v.(string); ok {
-		return requestID
-	}
-	return ""
 }
