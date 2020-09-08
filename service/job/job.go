@@ -36,7 +36,7 @@ type JobService interface {
 	Init() error
 	Start() error
 	Execute(job *model.Job, callback Callback)
-	Restart(job *model.Job, callback Callback) error
+	Restart(job *model.Job) error
 	Pause(job *model.Job) error
 	Shutdown(job *model.Job) error
 }
@@ -127,7 +127,7 @@ func (s *simpleJobService) Execute(job *model.Job, callback Callback) {
 	go s.runJob(job, callback)
 }
 
-func (s *simpleJobService) Restart(job *model.Job, callback Callback) error {
+func (s *simpleJobService) Restart(job *model.Job) error {
 	wrapper, ok := s.handler[job.Code]
 	if !ok {
 		//not exists

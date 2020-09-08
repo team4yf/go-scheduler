@@ -31,6 +31,24 @@ func InitJobBiz(fpmApp *fpm.Fpm) {
 			})
 			return
 		},
+		"restart": func(param *fpm.BizParam) (data interface{}, err error) {
+			// start a job
+			var job model.Job
+			if err = param.Convert(&job); err != nil {
+				return
+			}
+			err = jobService.Restart(&job)
+			return
+		},
+		"pause": func(param *fpm.BizParam) (data interface{}, err error) {
+			// start a job
+			var job model.Job
+			if err = param.Convert(&job); err != nil {
+				return
+			}
+			err = jobService.Pause(&job)
+			return
+		},
 	})
 
 	fpmApp.Subscribe("#job/success", func(topic string, data interface{}) {
