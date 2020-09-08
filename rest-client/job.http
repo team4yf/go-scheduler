@@ -2,7 +2,7 @@
 #  dev: http://localhost:8080
 @api = http://localhost:8080
 
-@code = test
+@code = health
 ### create
 POST {{api}}/biz/common/create
 Authorization: Basic admin 123456
@@ -20,6 +20,7 @@ Content-Type: application/json
         "url": "http://localhost:8080/health",
         "timeout": 600,
         "delay": 10,
+        "status": 1,
         "execute_type": "GET",
         "auth":"basic",
         "auth_properties":"{}",
@@ -31,16 +32,19 @@ Content-Type: application/json
 
 ### update
 
-POST {{api}}/api/v1/job/update
+POST {{api}}/biz/common/update
 Authorization: Basic admin 123456
 Content-Type: application/json
 
 {
-    "status": 1,
-    "code": "{{code}}",
-    "auth":"basic",
-    "authProperties":"{\"username\":\"admin\",\"password\":\"123456\"}",
-    "argument":"{}"
+    "table": "schedule_job",
+    "condition": "code = '{{code}}'",
+    "row": {
+        "status": 1,
+        "auth":"basic",
+        "auth_properties":"{\"username\":\"admin\",\"password\":\"123456\"}",
+        "argument":"{}"
+    }
 }
 
 
@@ -63,7 +67,7 @@ Content-Type: application/json
 
 ### execute once
 
-GET {{api}}/api/v1/job/execute/{{code}}
+GET {{api}}/biz/job/execute?code={{code}}
 Authorization: Basic admin 123456
 
 

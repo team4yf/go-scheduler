@@ -4,3 +4,4 @@ conf/postgresql/data/
 export/
 logs/
 conf/config.metro.yaml
+conf/

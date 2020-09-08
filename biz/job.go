@@ -10,7 +10,10 @@ import (
 func InitJobBiz(fpmApp *fpm.Fpm) {
 	dbclient, _ := fpmApp.GetDatabase("pg")
 	jobService := job.NewSimpleJobService(dbclient)
-	jobService.Start()
+	jobService.Init()
+	if err := jobService.Start(); err != nil {
+		fpmApp.Logger.Errorf("start scheduler error: %v", err)
+	}
 
 	fpmApp.AddBizModule("job", &fpm.BizModule{
 		"execute": func(param *fpm.BizParam) (data interface{}, err error) {
@@ -28,5 +31,9 @@ func InitJobBiz(fpmApp *fpm.Fpm) {
 			})
 			return
 		},
+	})
+
+	fpmApp.Subscribe("#job/success", func(topic string, data interface{}) {
+
 	})
 }

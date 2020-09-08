@@ -58,7 +58,6 @@ func NewSimpleJobService(db db.Database) JobService {
 		db:      db,
 		handler: make(map[string]*JobWrapper),
 	}
-	Init()
 	return serviec
 }
 
