@@ -2,6 +2,15 @@ mode: debug
 addr: ':8080'
 name: go-scheduler
 
+db:
+    engine: postgres
+    user: fpm
+    password: Fim741235896
+    host: localhost
+    port: 5432
+    database: fim
+    charset: utf8
+    showsql: true
 
 smtp:
     host: smtp.qq.com

@@ -7,19 +7,14 @@ import (
 	"time"
 
 	"github.com/robfig/cron/v3"
-	"github.com/team4yf/go-scheduler/constant"
+	"github.com/team4yf/fpm-go-pkg/log"
+	fpmUtils "github.com/team4yf/fpm-go-pkg/utils"
 	"github.com/team4yf/go-scheduler/model"
-	"github.com/team4yf/go-scheduler/pkg/email"
-	"github.com/team4yf/go-scheduler/repository/job"
-	"github.com/team4yf/go-scheduler/repository/subscribe"
-	"github.com/team4yf/go-scheduler/repository/task"
-	"google.golang.org/appengine/log"
+	"github.com/team4yf/go-scheduler/pkg/utils"
+	"github.com/team4yf/yf-fpm-server-go/pkg/db"
 )
 
 var (
-	jobRepo      job.JobRepo
-	taskRepo     task.TaskRepo
-	subRepo      subscribe.SubscribeRepo
 	errNotInited = errors.New("Schedule Not Inited!")
 	inited       = false //the flag of the service.Init()
 )
@@ -31,21 +26,6 @@ type notifyBody struct {
 
 //Init init by the caller
 func Init() {
-	jobRepo = job.NewJobRepo()
-	taskRepo = task.NewTaskRepo()
-	subRepo = subscribe.NewSubscribeRepo()
-}
-
-func generateCallback(theJob *model.Job) func() {
-	return func() {
-		go runJob(theJob, func(data interface{}, err error) {
-			if err != nil {
-				log.Errorf("Run Job: %+v, Error: %+v\n", theJob, err)
-				return
-			}
-		})
-	}
-
 }
 
 //Callback the callback struct
@@ -67,27 +47,43 @@ type JobWrapper struct {
 	id  cron.EntryID
 }
 type simpleJobService struct {
+	db       db.Database
 	schedule *cron.Cron
 	locker   sync.RWMutex
 	handler  map[string]*JobWrapper
 }
 
-func NewSimpleJobService() JobService {
+func NewSimpleJobService(db db.Database) JobService {
 	serviec := &simpleJobService{
+		db:      db,
 		handler: make(map[string]*JobWrapper),
 	}
 	Init()
 	return serviec
 }
 
+func generateCallback(s *simpleJobService, theJob *model.Job) func() {
+	return func() {
+		go s.runJob(theJob, func(data interface{}, err error) {
+			if err != nil {
+				log.Errorf("Run Job: %+v, Error: %+v\n", theJob, err)
+				return
+			}
+		})
+	}
+
+}
+
 func (s *simpleJobService) Init() (err error) {
 	if inited {
 		return nil
 	}
-
-	list, err := jobRepo.List(-1)
+	q := db.NewQuery()
+	q.SetTable("schedule_job")
+	list := make([]*model.Job, 0)
+	err = s.db.Find(q, &list)
 	if err != nil {
-		return err
+		return
 	}
 	s.locker.RLock()
 	defer s.locker.RUnlock()
@@ -98,7 +94,7 @@ func (s *simpleJobService) Init() (err error) {
 		//wrap the data and the callback
 		s.handler[j.Code] = &JobWrapper{
 			job: j,
-			f:   generateCallback(j),
+			f:   generateCallback(s, j),
 		}
 	}
 	s.schedule = cron.New()
@@ -113,7 +109,7 @@ func (s *simpleJobService) Start() (err error) {
 	//add the func
 	for _, wrapper := range s.handler {
 		//ignore the not run job
-		if wrapper.job.Status != constant.StatusRun {
+		if wrapper.job.Status != 1 {
 			continue
 		}
 		id, err := s.schedule.AddFunc(wrapper.job.Cron, wrapper.f)
@@ -129,7 +125,7 @@ func (s *simpleJobService) Start() (err error) {
 }
 
 func (s *simpleJobService) Execute(job *model.Job, callback Callback) {
-	go runJob(job, callback)
+	go s.runJob(job, callback)
 }
 
 func (s *simpleJobService) Restart(job *model.Job, callback Callback) error {
@@ -174,7 +170,7 @@ func (s *simpleJobService) Shutdown(job *model.Job) error {
 
 //Actually run the http request
 //Log the response for the task
-func runJob(job *model.Job, callback Callback) {
+func (s *simpleJobService) runJob(job *model.Job, callback Callback) {
 	startAt := time.Now()
 	task := &model.Task{
 		Code:    job.Code,
@@ -182,7 +178,9 @@ func runJob(job *model.Job, callback Callback) {
 		URL:     job.URL,
 		Status:  0,
 	}
-	if err := taskRepo.Create(task); err != nil {
+	q := db.NewQuery()
+	q.SetTable(task.TableName())
+	if err := s.db.Create(q.BaseData, task); err != nil {
 		callback(nil, err)
 		return
 	}
@@ -193,7 +191,7 @@ func runJob(job *model.Job, callback Callback) {
 		Type: utils.HTTPAuthType(job.Auth),
 	}
 	if authProp != "" {
-		utils.StringToStruct(authProp, &auth.Data)
+		fpmUtils.StringToStruct(authProp, &auth.Data)
 	} else {
 		auth.Data = utils.HTTPAuthData(make(map[string]interface{}))
 	}
@@ -207,22 +205,31 @@ func runJob(job *model.Job, callback Callback) {
 		rsp = utils.PostFormWithAuth(job.URL, job.Argument, job.Timeout, auth)
 	}
 
-	task.EndAt = time.Now()
-	task.Cost = task.EndAt.UnixNano()/1e6 - task.StartAt.UnixNano()/1e6
-	task.Status = rsp.StatusCode
+	updates := db.CommonMap{
+		"end_at": time.Now(),
+		"cost":   task.EndAt.UnixNano()/1e6 - task.StartAt.UnixNano()/1e6,
+		"status": rsp.StatusCode,
+	}
 	isSuccess := rsp.StatusCode == http.StatusOK
 	if isSuccess {
-		task.Log = rsp.Body
+		updates["log"] = rsp.Body
 	}
 
 	//update the task status
-	if err := taskRepo.Update(task); err != nil {
+	q = db.NewQuery()
+	q.SetTable(model.Task{}.TableName())
+	q.SetCondition("id=?", task.ID)
+	var count int64
+	if err := s.db.Updates(q.BaseData, updates, &count); err != nil {
 		callback(nil, err)
 		return
 	}
 	//notify the job's subscriber
 	go func() {
-		subs, err := subRepo.List(job.Code)
+		q := db.NewQuery()
+		q.SetTable(model.Subscribe{}.TableName())
+		subs := make([]*model.Subscribe, 0)
+		err := s.db.Find(q, &subs)
 		if err != nil {
 			log.Errorf("get subscriber err: %+v\n", err)
 			return
@@ -250,10 +257,10 @@ func runJob(job *model.Job, callback Callback) {
 				}
 				switch sub.NotifyType {
 				case "webhook":
-					utils.PostJson(sub.Subscriber, utils.JSON2String(body), 120)
+					utils.PostJson(sub.Subscriber, fpmUtils.JSON2String(body), 120)
 				case "email":
-					subject, content := email.NewNotifyEmail("./templates/task-email.html", "Scheduler-Notify", *task)
-					email.Send(sub.Subscriber, subject, content)
+					// subject, content := email.NewNotifyEmail("./templates/task-email.html", "Scheduler-Notify", *task)
+					// email.Send(sub.Subscriber, subject, content)
 				}
 				subscribers = append(subscribers, sub.Subscriber)
 			}

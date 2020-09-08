@@ -15,6 +15,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
+	github.com/team4yf/fpm-go-pkg v0.0.0-20200907232930-67704d580ed7
 	github.com/team4yf/fpm-go-plugin-email v0.0.0-20200908064908-57f0ab74fe2f // indirect
 	github.com/team4yf/fpm-go-plugin-orm v0.0.5 // indirect
 	github.com/team4yf/yf-fpm-server-go v0.2.4
