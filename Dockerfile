@@ -12,8 +12,6 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 WORKDIR /app
 
 COPY ./bin/app /app/app
-COPY ./conf/config.local.yaml /app/conf/config.local.yaml
-COPY ./templates /app/templates
 # RUN ls /app && cat /app/config/config.toml
 # Command to run the executable
 ENTRYPOINT ["/app/app"]
