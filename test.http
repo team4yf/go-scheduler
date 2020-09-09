@@ -1,0 +1,78 @@
+@api = http://localhost:8080
+
+@code = health
+
+@web = web
+
+### execute once
+POST {{api}}/biz/job/add
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "cron": "* * * * *",
+    "code": "{{code}}",
+    "retryMax": 5,
+    "name": "{{code}}",
+    "title":"{{code}}",
+    "remark": "{{code}}",
+    "url": "foo.bar",
+    "timeout": 600,
+    "delay": 10,
+    "status": 1,
+    "executeType": "INTERNAL",
+    "auth":"basic",
+    "authProperties":"{}",
+    "argument":"{}",
+    "notifyTopic": "demo"
+}
+### get list
+GET {{api}}/biz/job/list
+Authorization: Basic admin 123456
+
+### run one
+GET {{api}}/biz/job/execute?code={{code}}
+Authorization: Basic admin 123456
+
+### pause
+GET {{api}}/biz/job/pause?code={{code}}
+Authorization: Basic admin 123456
+
+### get task list
+POST {{api}}/biz/job/tasks
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "code": "{{code}}",
+    "skip": 0,
+    "limit": 2
+}
+
+
+### execute once
+POST {{api}}/biz/job/add
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "cron": "* * * * *",
+    "code": "{{web}}",
+    "retryMax": 5,
+    "name": "{{web}}",
+    "title":"{{web}}",
+    "remark": "{{web}}",
+    "url": "http://localhost:9090/health",
+    "timeout": 600,
+    "delay": 10,
+    "status": 1,
+    "executeType": "GET",
+    "auth":"basic",
+    "authProperties":"{\"username\":\"admin\",\"password\":\"123456\"}",
+    "argument":"{}",
+    "notifyTopic": "health"
+}
+
+### run one
+GET {{api}}/biz/job/execute?code={{web}}
+Authorization: Basic admin 123456
