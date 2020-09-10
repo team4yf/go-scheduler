@@ -1,5 +1,5 @@
 @api = http://localhost:8080
-
+@prod = https://api.metro.com.cn/k8s2/goscheduler
 @code = health
 
 @web = web
