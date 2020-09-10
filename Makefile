@@ -5,7 +5,7 @@ GOBIN=$(GOBASE)/bin
 
 all: build docker-build docker-push #docker-push-public
 
-all-public: build docker-build docker-push-public
+all-metro: build docker-build-metro docker-push-metro
 
 install:
 	go mod download
@@ -21,12 +21,15 @@ start:
 	$(GOBIN)/app
 
 docker-build:
-	docker build -t yfsoftcom/$(PROJECTNAME):latest -t registry.cn-hangzhou.aliyuncs.com/metro/$(PROJECTNAME):beta -t $(PROJECTNAME):latest .
+	docker build -t yfsoftcom/$(PROJECTNAME):latest -t $(PROJECTNAME):latest .
+
+docker-build-metro:
+	docker build --build-arg config=metro -t registry.cn-hangzhou.aliyuncs.com/metro/$(PROJECTNAME):metro .
+
+docker-push-metro:
+	docker push registry.cn-hangzhou.aliyuncs.com/metro/$(PROJECTNAME):metro
 
 docker-push:
-	docker push registry.cn-hangzhou.aliyuncs.com/metro/$(PROJECTNAME):beta
-
-docker-push-public:
 	docker push yfsoftcom/$(PROJECTNAME):latest
 
 docker-run:

@@ -6,13 +6,14 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
   apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
   echo "Asia/Shanghai" > /etc/timezone
   
-
+ARG config=local
 # 设置时区为上海
 
 WORKDIR /app
 
 COPY ./bin/app /app/app
 # RUN ls /app && cat /app/config/config.toml
+COPY ./conf/config.${config}.yaml /app/conf/config.local.yaml
 # Command to run the executable
 ENTRYPOINT ["/app/app"]
 # CMD []
