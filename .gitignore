@@ -5,4 +5,4 @@ export/
 logs/
 conf/config.metro.yaml
 conf/
-conf/config.metro.yaml
+conf/config.local.yaml

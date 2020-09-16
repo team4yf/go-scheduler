@@ -2,7 +2,7 @@
 @prod = https://api.metro.com.cn/k8s2/goscheduler
 @code = health
 
-@web = web
+@web = lifecycle-0914
 
 ### execute once
 POST {{api}}/biz/job/add
@@ -27,7 +27,7 @@ Content-Type: application/json
     "notifyTopic": "demo"
 }
 ### get list
-GET {{api}}/biz/job/list
+GET {{prod}}/biz/job/list
 Authorization: Basic admin 123456
 
 ### run one
@@ -50,29 +50,51 @@ Content-Type: application/json
 }
 
 
-### execute once
-POST {{api}}/biz/job/add
+### add once
+POST {{prod}}/biz/job/add
 Authorization: Basic admin 123456
 Content-Type: application/json
 
 {
-    "cron": "* * * * *",
+    "cron": "30 8 * * *",
     "code": "{{web}}",
-    "retryMax": 5,
+    "retryMax": 1,
     "name": "{{web}}",
     "title":"{{web}}",
     "remark": "{{web}}",
-    "url": "http://localhost:9090/health",
-    "timeout": 600,
+    "url": "https://api.metro.com.cn/k8s2/lifecycle-coupon-sender/biz/batch/push",
+    "timeout": 6000,
+    "delay": 10,
+    "status": 1,
+    "executeType": "POST",
+    "auth":"",
+    "authProperties":"{}",
+    "argument":"{\"datasource\":\"lifecycle-0914\",\"strategy\":\"lifecycle-0914\",\"limit\":5}",
+    "notifyTopic": "{{web}}"
+}
+
+### add once
+POST {{prod}}/biz/job/add
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "cron": "29 8 * * *",
+    "code": "{{web}}-approve",
+    "retryMax": 1,
+    "name": "{{web}}-approve",
+    "title":"{{web}}-approve",
+    "remark": "{{web}}-approve",
+    "url": "https://api.metro.com.cn/k8s2/lifecycle-coupon-sender/biz/batch/approve",
+    "timeout": 6000,
     "delay": 10,
     "status": 1,
     "executeType": "GET",
-    "auth":"basic",
-    "authProperties":"{\"username\":\"admin\",\"password\":\"123456\"}",
+    "auth":"",
+    "authProperties":"{}",
     "argument":"{}",
-    "notifyTopic": "health"
+    "notifyTopic": "{{web}}-approve"
 }
-
 ### run one
-GET {{api}}/biz/job/execute?code={{web}}
+GET {{prod}}/biz/job/execute?code=lifecycle-0914
 Authorization: Basic admin 123456
