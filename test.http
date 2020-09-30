@@ -31,7 +31,7 @@ GET {{prod}}/biz/job/list
 Authorization: Basic admin 123456
 
 ### run one
-GET {{api}}/biz/job/execute?code={{code}}
+GET {{prod}}/biz/job/execute?code=reduce-score-test
 Authorization: Basic admin 123456
 
 ### pause
@@ -98,3 +98,51 @@ Content-Type: application/json
 ### run one
 GET {{prod}}/biz/job/execute?code=lifecycle-0914
 Authorization: Basic admin 123456
+
+
+
+### add once
+POST {{prod}}/biz/job/add
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "cron": "0 1 1 10 *",
+    "code": "reduce-score",
+    "retryMax": 1,
+    "name": "reduce-score",
+    "title":"reduce-score",
+    "remark": "reduce-score",
+    "url": "https://api.metro.com.cn/k8s2/reduce-score-job/biz/reduce/run?mode=prod",
+    "timeout": 6000,
+    "delay": 10,
+    "status": 1,
+    "executeType": "GET",
+    "auth":"",
+    "authProperties":"{}",
+    "argument":"{}",
+    "notifyTopic": "reduce-score"
+}
+
+### add once
+POST {{prod}}/biz/job/add
+Authorization: Basic admin 123456
+Content-Type: application/json
+
+{
+    "cron": "0 1 1 10 *",
+    "code": "reduce-score-test",
+    "retryMax": 1,
+    "name": "reduce-score-test",
+    "title":"reduce-score-test",
+    "remark": "reduce-score-test",
+    "url": "https://api.metro.com.cn/k8s2/reduce-score-job/biz/reduce/run",
+    "timeout": 6000,
+    "delay": 10,
+    "status": 1,
+    "executeType": "GET",
+    "auth":"",
+    "authProperties":"{}",
+    "argument":"{}",
+    "notifyTopic": "reduce-score-test"
+}
