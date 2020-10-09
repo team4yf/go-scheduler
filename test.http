@@ -146,3 +146,14 @@ Content-Type: application/json
     "argument":"{}",
     "notifyTopic": "reduce-score-test"
 }
+
+
+
+
+### remove
+GET {{prod}}/biz/job/remove?code=reduce-score
+Authorization: Basic admin 123456
+
+### get list
+GET {{prod}}/biz/job/list
+Authorization: Basic admin 123456

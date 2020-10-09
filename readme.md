@@ -31,49 +31,31 @@ it's build with `yf-fpm-server`, base the postgresql/mysql, send http request ac
 
 #### API List
 
-- [x] GET `/api/v1/job/list`
+- [x] GET `/biz/job/list`
   
   fetch all job list.
-- [x] GET `/api/v1/job/get/:code`
 
-  get the specific job detail by the code.
-- [x] GET `/api/v1/job/execute/:code`
+- [x] GET `/biz/job/execute?code={code}`
 
   run once by the specific job code.
-- [x] POST `/api/v1/job/create`
+- [x] POST `/biz/job/add`
 
   create a job.
-- [x] POST `/api/v1/job/update`
+- [x] POST `/biz/job/update`
 
   update the job, basiclly use it to define the job's status. auto start or not.
-- [x] GET `/api/v1/task/list/:code?p=1&l=10`
+- [x] GET `/biz/job/remove?code={code}`
 
-  get the specific job's tasks.
+  remove the job. it can not be restart.
+- [x] GET `/biz/job/get?code={code}`
 
-- [x] GET `/api/v1/task/export/:code?p=1&l=10`
+  get the job detail.
+- [x] GET `/biz/job/pause?code={code}`
 
-  export the tasks log by the specific job.
+  pause the job, it can be restart.
+- [x] GET `/biz/job/tasks?code={code}&skip={skip}&limit={limit}`
 
-- [x] GET `/api/v1/task/detail/:id`
-
-  get the detail infomation of the taskid
-
-- [x] GET `/api/v1/task/report/:code`
-
-  get the tasks report by the specific job, include the succes/fail/total, last execute time & last execute result.
-- [x] POST `/api/v1/subscribe/sub/:code`
-
-  subscribe the job's notification after the task finished; the `envent` should be `success`, `error`, `timeout`, `all`.
-
-- [x] POST `/api/v1/subscribe/unSub/:code`
-
-  unSubscribe the topic.
-
-- [x] GET `/api/v1/subscribe/list/:code`
-
-  list all the subscriber of the specific job by code.
-
-  
+  get the tasks of the job.
 
 #### Deploy Manual
 
